@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حباب طلا و دلار</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --gold: #f5c842;
+    --gold-dim: #8a6e1a;
+    --dollar: #4ade80;
+    --dollar-dim: #1a5c30;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  header p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .last-update {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ---- Cards grid ---- */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .card.gold::before { background: var(--gold); }
+  .card.dollar::before { background: var(--dollar); }
+  .card.intrinsic::before { background: var(--blue); }
+  .card.bubble::before { background: var(--red); }
+
+  .card-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .card-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .card.gold .card-value { color: var(--gold); }
+  .card.dollar .card-value { color: var(--dollar); }
+  .card.intrinsic .card-value { color: var(--blue); }
+  .card.bubble .card-value { color: var(--red); }
+
+  .card-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ---- Bubble meter ---- */
+  .bubble-meter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    margin-bottom: 20px;
+  }
+
+  .meter-title {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .meter-bar-wrap {
+    position: relative;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .meter-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  .meter-pct {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  /* ---- Manual input panel ---- */
+  .input-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .panel-title {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .input-group input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    transition: border-color 0.2s;
+  }
+
+  .input-group input:focus { border-color: var(--gold); }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  button:active { opacity: 0.7; }
+
+  .btn-calc {
+    background: var(--gold);
+    color: #0d0f14;
+  }
+
+  .btn-fetch {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* ---- Formula note ---- */
+  .formula-note {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .formula-note strong { color: var(--blue); }
+
+  .formula-note .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .formula-note .row:last-child { border-bottom: none; }
+
+  /* ---- Status ---- */
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .badge-healthy { background: #14532d; color: #4ade80; }
+  .badge-mild    { background: #713f12; color: #fbbf24; }
+  .badge-high    { background: #7f1d1d; color: #f87171; }
+
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .section-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 حباب طلا و دلار</h1>
+  <p>ارزش ذاتی · حباب · قیمت لحظه‌ای</p>
+  <div class="last-update" id="lastUpdate">—</div>
+</header>
+
+<!-- Cards -->
+<div class="cards">
+  <div class="card gold">
+    <div class="card-label">قیمت سکه</div>
+    <div class="card-value" id="coinPrice">—</div>
+    <div class="card-sub">تومان</div>
+  </div>
+  <div class="card dollar">
+    <div class="card-label">قیمت دلار</div>
+    <div class="card-value" id="dollarPrice">—</div>
+    <div class="card-sub">تومان</div>
+  </div>
+  <div class="card intrinsic">
+    <div class="card-label">ارزش ذاتی سکه</div>
+    <div class="card-value" id="intrinsicVal">—</div>
+    <div class="card-sub">تومان</div>
+  </div>
+  <div class="card bubble">
+    <div class="card-label">حباب سکه</div>
+    <div class="card-value" id="bubblePct">—</div>
+    <div class="card-sub" id="bubbleStatus">—</div>
+  </div>
+</div>
+
+<!-- Bubble Meter -->
+<div class="bubble-meter">
+  <div class="meter-title">🌡 سنجه حباب</div>
+  <div class="meter-pct" id="meterPct" style="color:var(--muted)">—</div>
+  <div class="meter-bar-wrap">
+    <div class="meter-bar-fill" id="meterBar" style="width:0%;background:var(--muted)"></div>
+  </div>
+  <div class="meter-labels">
+    <span>بدون حباب</span>
+    <span>حباب متوسط ۱۵٪</span>
+    <span>حباب شدید ۳۰٪+</span>
+  </div>
+  <div id="statusBadge"></div>
+</div>
+
+<!-- Manual Input -->
+<div class="input-panel">
+  <div class="panel-title">✏️ ورود دستی / اصلاح قیمت</div>
+  <div class="input-row">
+    <div class="input-group">
+      <label>قیمت سکه (تومان)</label>
+      <input type="number" id="inCoin" placeholder="مثلاً 48000000">
+    </div>
+    <div class="input-group">
+      <label>قیمت دلار (تومان)</label>
+      <input type="number" id="inDollar" placeholder="مثلاً 95000">
+    </div>
+  </div>
+  <div class="input-row">
+    <div class="input-group">
+      <label>اونس جهانی طلا (دلار)</label>
+      <input type="number" id="inOunce" placeholder="مثلاً 3300">
+    </div>
+    <div class="input-group">
+      <label>عیار / ضریب سکه</label>
+      <input type="number" id="inCoeff" placeholder="0.0876" step="0.0001">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-calc" onclick="calcManual()">محاسبه</button>
+    <button class="btn-fetch" onclick="fetchAll()">دریافت خودکار <span id="fetchIcon"></span></button>
+  </div>
+</div>
+
+<!-- Formula -->
+<div class="formula-note">
+  <div style="font-weight:600;color:var(--text);margin-bottom:8px;">📐 فرمول ارزش ذاتی سکه</div>
+  <div class="row"><span>ارزش ذاتی</span><span><strong>= اونس × دلار × ۰.۰۸۷۶</strong></span></div>
+  <div class="row"><span>ضریب ۰.۰۸۷۶</span><span>وزن سکه ۸.۱۳۳ گرم / ۲۴ × ۲۲ عیار</span></div>
+  <div class="row"><span>حباب</span><span><strong>= (قیمت بازار − ذاتی) / ذاتی × ۱۰۰</strong></span></div>
+</div>
+
+<script>
+  // Default state
+  let state = {
+    coin: null,
+    dollar: null,
+    ounce: null,
+    coeff: 0.0876
+  };
+
+  function fmt(n) {
+    if (!n) return '—';
+    return Math.round(n).toLocaleString('fa-IR');
+  }
+
+  function calcIntrinsic(ounce, dollar, coeff) {
+    return ounce * dollar * coeff;
+  }
+
+  function calcBubble(market, intrinsic) {
+    return ((market - intrinsic) / intrinsic) * 100;
+  }
+
+  function render(coin, dollar, ounce, coeff) {
+    const intrinsic = calcIntrinsic(ounce, dollar, coeff);
+    const bubble = calcBubble(coin, intrinsic);
+
+    document.getElementById('coinPrice').textContent = fmt(coin);
+    document.getElementById('dollarPrice').textContent = fmt(dollar);
+    document.getElementById('intrinsicVal').textContent = fmt(intrinsic);
+
+    const bPct = bubble.toFixed(1);
+    document.getElementById('bubblePct').textContent = (bubble >= 0 ? '+' : '') + bPct + '٪';
+
+    // Meter
+    const clamp = Math.max(-10, Math.min(bubble, 50));
+    const pct = ((clamp + 10) / 60) * 100;
+    const bar = document.getElementById('meterBar');
+    const meterPct = document.getElementById('meterPct');
+    meterPct.textContent = (bubble >= 0 ? '+' : '') + bPct + '٪';
+
+    let color, badgeClass, badgeText;
+    if (bubble < 5) { color = '#4ade80'; badgeClass = 'badge-healthy'; badgeText = '✅ بدون حباب قابل توجه'; }
+    else if (bubble < 15) { color = '#fbbf24'; badgeClass = 'badge-mild'; badgeText = '⚠️ حباب ملایم'; }
+    else { color = '#f87171'; badgeClass = 'badge-high'; badgeText = '🔴 حباب بالا'; }
+
+    bar.style.width = pct + '%';
+    bar.style.background = color;
+    meterPct.style.color = color;
+    document.getElementById('bubbleStatus').textContent = badgeText;
+
+    document.getElementById('statusBadge').innerHTML =
+      `<span class="status-badge ${badgeClass}">${badgeText}</span>`;
+  }
+
+  function calcManual() {
+    const coin   = parseFloat(document.getElementById('inCoin').value)   || state.coin;
+    const dollar = parseFloat(document.getElementById('inDollar').value) || state.dollar;
+    const ounce  = parseFloat(document.getElementById('inOunce').value)  || state.ounce;
+    const coeff  = parseFloat(document.getElementById('inCoeff').value)  || state.coeff;
+
+    if (!coin || !dollar || !ounce) {
+      alert('لطفاً حداقل قیمت سکه، دلار و اونس را وارد کنید.');
+      return;
+    }
+
+    state = { coin, dollar, ounce, coeff };
+    render(coin, dollar, ounce, coeff);
+    document.getElementById('lastUpdate').textContent = 'به‌روز شده: ورودی دستی';
+  }
+
+  // ---- TGJU API via proxy ----
+  async function fetchTGJU(symbol) {
+    // TGJU public endpoint (no auth needed for current price)
+    const url = `https://api.tgju.org/v1/market/indicator/summary-table-data/${symbol}`;
+    const res = await fetch(url);
+    const json = await res.json();
+    // price is in 'p' field, as string with commas
+    return parseFloat(json.data?.['current']?.replace(/,/g, '') || '0');
+  }
+
+  async function fetchAll() {
+    const icon = document.getElementById('fetchIcon');
+    icon.innerHTML = '<span class="spinner"></span>';
+
+    try {
+      // TGJU symbols: sekke-emami = full bahar coin, dollar = USD
+      // We fetch in parallel
+      const [coin, dollar, ounce] = await Promise.all([
+        fetchTGJU('sekke-emami'),   // سکه تمام بهار آزادی
+        fetchTGJU('price_dollar_rl'), // دلار (ریال → تقسیم بر ۱۰)
+        fetchGoldOunce()
+      ]);
+
+      // TGJU returns Rial for dollar, convert to Toman
+      const dollarToman = dollar / 10;
+      const coinToman   = coin / 10;
+
+      state = { coin: coinToman, dollar: dollarToman, ounce, coeff: 0.0876 };
+      render(coinToman, dollarToman, ounce, 0.0876);
+
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent =
+        'آخرین دریافت: ' + now.toLocaleTimeString('fa-IR');
+
+    } catch (e) {
+      console.error(e);
+      // Fallback: try alternative approach
+      tryFallback();
+    } finally {
+      icon.innerHTML = '';
+    }
+  }
+
+  async function fetchGoldOunce() {
+    // Use a free gold API for international price
+    const res = await fetch('https://api.metals.live/v1/spot/gold');
+    const json = await res.json();
+    return json[0]?.price || 3300;
+  }
+
+  async function tryFallback() {
+    // If CORS fails, use Claude API to get approximate live data
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 300,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+          messages: [{
+            role: 'user',
+            content: 'Search for current price: 1) سکه تمام بهار آزادی in Toman 2) USD/IRR exchange rate Toman 3) Gold spot price USD per ounce. Return ONLY JSON: {"coin":NUMBER,"dollar":NUMBER,"ounce":NUMBER}'
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || '').join('');
+      const match = text.match(/\{[^}]+\}/);
+      if (match) {
+        const parsed = JSON.parse(match[0]);
+        state = { ...parsed, coeff: 0.0876 };
+        render(parsed.coin, parsed.dollar, parsed.ounce, 0.0876);
+        document.getElementById('lastUpdate').textContent =
+          'دریافت از Claude · ' + new Date().toLocaleTimeString('fa-IR');
+      }
+    } catch (err) {
+      document.getElementById('lastUpdate').textContent = '⚠️ خطا در دریافت — از ورود دستی استفاده کنید';
+    }
+  }
+
+  // Auto-fetch on load
+  fetchAll();
+</script>
+</body>
+</html>
