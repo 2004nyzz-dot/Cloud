@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفتر حساب</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #00C48C;
+  --red: #FF5370;
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --surface2: #22263A;
+  --border: #2A2E42;
+  --text: #F0F2FF;
+  --muted: #6B7194;
+  --green-soft: rgba(0,196,140,0.12);
+  --red-soft: rgba(255,83,112,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+/* HEADER */
+header {
+  padding: 28px 20px 20px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+.header-title { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
+.header-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+/* BALANCE BAR */
+.balance-bar {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  background: var(--surface);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  margin: 16px 20px 0;
+  overflow: hidden;
+}
+.bal-item { padding: 14px 16px; }
+.bal-item:first-child { border-left: none; }
+.bal-divider { background: var(--border); margin: 14px 0; }
+.bal-lbl { font-size: 0.68rem; color: var(--muted); font-weight: 500; margin-bottom: 5px; }
+.bal-val { font-size: 1.05rem; font-weight: 800; direction: ltr; }
+.bal-val.green { color: var(--green); }
+.bal-val.red { color: var(--red); }
+
+/* NET */
+.net-bar {
+  margin: 10px 20px 0;
+  background: var(--surface2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.net-lbl { font-size: 0.72rem; color: var(--muted); }
+.net-val { font-size: 0.9rem; font-weight: 700; direction: ltr; }
+
+/* TABS */
+.tabs {
+  display: flex;
+  margin: 16px 20px 0;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid var(--border);
+}
+.tab {
+  flex: 1;
+  padding: 8px 6px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.tab.active-all { background: var(--surface2); color: var(--text); }
+.tab.active-talab { background: var(--green-soft); color: var(--green); }
+.tab.active-bedahi { background: var(--red-soft); color: var(--red); }
+
+/* MAIN */
+main { padding: 16px 20px 0; max-width: 500px; margin: 0 auto; }
+
+/* ADD FORM */
+.add-section { margin-bottom: 20px; }
+.section-label {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.type-toggle {
+  display: flex;
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.type-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.type-btn.sel-talab { background: var(--green-soft); color: var(--green); }
+.type-btn.sel-bedahi { background: var(--red-soft); color: var(--red); }
+
+.form-card {
+  background: var(--surface);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.field {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.field:last-child { border-bottom: none; }
+.field-icon { font-size: 1rem; width: 22px; text-align: center; flex-shrink: 0; }
+.field-body { flex: 1; }
+.field-lbl { font-size: 0.65rem; color: var(--muted); margin-bottom: 2px; }
+.field input, .field textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  padding: 0;
+}
+.field textarea { height: 50px; resize: none; }
+.field input::placeholder, .field textarea::placeholder { color: var(--border); }
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  letter-spacing: 0.3px;
+  transition: opacity 0.2s;
+}
+.submit-btn:active { opacity: 0.85; }
+
+/* LIST */
+.list-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.list-count { font-size: 0.7rem; color: var(--muted); }
+.clear-btn {
+  font-size: 0.7rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  padding: 50px 0;
+  line-height: 2;
+}
+
+.item {
+  background: var(--surface);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 10px;
+  transition: opacity 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.item::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.item.talab::before { background: var(--green); }
+.item.bedahi::before { background: var(--red); }
+.item.paid { opacity: 0.45; }
+
+.item-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.item-name { font-size: 0.95rem; font-weight: 700; }
+.item-type {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-top: 3px;
+  display: inline-block;
+}
+.item.talab .item-type { background: var(--green-soft); color: var(--green); }
+.item.bedahi .item-type { background: var(--red-soft); color: var(--red); }
+
+.item-amount { font-size: 1.1rem; font-weight: 800; direction: ltr; text-align: left; }
+.item.talab .item-amount { color: var(--green); }
+.item.bedahi .item-amount { color: var(--red); }
+.item-unit { font-size: 0.6rem; color: var(--muted); text-align: left; }
+
+.item-info { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+.item-date { font-size: 0.72rem; color: var(--muted); }
+.item-desc { font-size: 0.78rem; color: #9AA0C0; }
+
+.paid-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  background: var(--surface2);
+  color: var(--muted);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+.item-actions { display: flex; gap: 8px; margin-top: 12px; }
+.act-btn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface2);
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.act-btn:active { opacity: 0.7; }
+.act-paid { color: var(--green); border-color: rgba(0,196,140,0.3); }
+.act-del { color: var(--red); border-color: rgba(255,83,112,0.3); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="header-title">📒 دفتر حساب</div>
+      <div class="header-sub">بدهی و طلب دوستان و خانواده</div>
+    </div>
+  </div>
+
+  <div class="balance-bar">
+    <div class="bal-item">
+      <div class="bal-lbl">طلب دارم</div>
+      <div class="bal-val green" id="sum-talab">۰</div>
+    </div>
+    <div class="bal-divider"></div>
+    <div class="bal-item">
+      <div class="bal-lbl">بدهکارم</div>
+      <div class="bal-val red" id="sum-bedahi">۰</div>
+    </div>
+  </div>
+
+  <div class="net-bar">
+    <span class="net-lbl">مانده خالص</span>
+    <span class="net-val" id="net-val">۰ ریال</span>
+  </div>
+
+  <div class="tabs" style="margin-top:14px;">
+    <button class="tab active-all" id="tab-all" onclick="setFilter('all',this)">همه</button>
+    <button class="tab" id="tab-talab" onclick="setFilter('talab',this)">طلب‌هام</button>
+    <button class="tab" id="tab-bedahi" onclick="setFilter('bedahi',this)">بدهی‌هام</button>
+  </div>
+</header>
+
+<main>
+  <div class="add-section">
+    <div class="section-label">ثبت حساب جدید</div>
+
+    <div class="type-toggle">
+      <button class="type-btn sel-talab" id="btn-talab" onclick="selectType('talab')">✅ طلب دارم</button>
+      <button class="type-btn" id="btn-bedahi" onclick="selectType('bedahi')">🔴 بدهکارم</button>
+    </div>
+
+    <div class="form-card">
+      <div class="field">
+        <span class="field-icon">👤</span>
+        <div class="field-body">
+          <div class="field-lbl">نام</div>
+          <input type="text" id="inp-name" placeholder="علی، مامان، رضا...">
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-icon">💰</span>
+        <div class="field-body">
+          <div class="field-lbl">مبلغ (ریال)</div>
+          <input type="text" inputmode="numeric" id="inp-amount" placeholder="۵،۰۰۰،۰۰۰" oninput="formatInput(this)">
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-icon">📅</span>
+        <div class="field-body">
+          <div class="field-lbl">تاریخ</div>
+          <input type="text" id="inp-date" placeholder="۱۴۰۴/۰۴/۰۶">
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-icon">📝</span>
+        <div class="field-body">
+          <div class="field-lbl">توضیحات (اختیاری)</div>
+          <textarea id="inp-desc" placeholder="بابت چی؟"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="addItem()">+ ثبت کن</button>
+  </div>
+
+  <div class="list-meta">
+    <span class="list-count" id="list-count"></span>
+    <button class="clear-btn" onclick="clearPaid()">حذف تسویه‌شده‌ها</button>
+  </div>
+
+  <div id="list"></div>
+</main>
+
+<script>
+let items = JSON.parse(localStorage.getItem('daftar_hesab') || '[]');
+let selectedType = 'talab';
+let currentFilter = 'all';
+
+function selectType(t) {
+  selectedType = t;
+  document.getElementById('btn-talab').className = 'type-btn' + (t==='talab'?' sel-talab':'');
+  document.getElementById('btn-bedahi').className = 'type-btn' + (t==='bedahi'?' sel-bedahi':'');
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(b => b.className = 'tab');
+  el.className = 'tab active-' + f;
+  render();
+}
+
+function fmt(n) { return Math.round(n).toLocaleString('fa-IR'); }
+
+function formatInput(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  el.dataset.raw = raw;
+  el.value = raw ? parseInt(raw).toLocaleString('fa-IR') : '';
+}
+
+function addItem() {
+  const name = document.getElementById('inp-name').value.trim();
+  const amountEl = document.getElementById('inp-amount');
+  const amount = parseFloat((amountEl.dataset.raw || '').replace(/[^0-9]/g, '') || amountEl.value.replace(/[^0-9]/g, ''));
+  const date = document.getElementById('inp-date').value.trim();
+  const desc = document.getElementById('inp-desc').value.trim();
+
+  if (!name) { alert('نام رو وارد کن'); return; }
+  if (!amount || amount <= 0) { alert('مبلغ رو وارد کن'); return; }
+
+  items.unshift({ id: Date.now(), type: selectedType, name, amount, date: date || '—', desc, paid: false });
+  save();
+  document.getElementById('inp-name').value = '';
+  amountEl.value = ''; amountEl.dataset.raw = '';
+  document.getElementById('inp-date').value = '';
+  document.getElementById('inp-desc').value = '';
+  render();
+}
+
+function togglePaid(id) {
+  const item = items.find(i => i.id === id);
+  if (item) { item.paid = !item.paid; save(); render(); }
+}
+
+function deleteItem(id) {
+  if (confirm('حذف شود؟')) { items = items.filter(i => i.id !== id); save(); render(); }
+}
+
+function clearPaid() {
+  if (confirm('همه تسویه‌شده‌ها حذف شوند؟')) { items = items.filter(i => !i.paid); save(); render(); }
+}
+
+function save() { localStorage.setItem('daftar_hesab', JSON.stringify(items)); }
+
+function render() {
+  const filtered = currentFilter === 'all' ? items : items.filter(i => i.type === currentFilter);
+
+  const talabSum = items.filter(i => i.type==='talab' && !i.paid).reduce((s,i)=>s+i.amount,0);
+  const bedahiSum = items.filter(i => i.type==='bedahi' && !i.paid).reduce((s,i)=>s+i.amount,0);
+  const net = talabSum - bedahiSum;
+
+  document.getElementById('sum-talab').textContent = fmt(talabSum) + ' ریال';
+  document.getElementById('sum-bedahi').textContent = fmt(bedahiSum) + ' ریال';
+  const netEl = document.getElementById('net-val');
+  netEl.textContent = (net >= 0 ? '+' : '') + fmt(net) + ' ریال';
+  netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+
+  document.getElementById('list-count').textContent = filtered.length + ' مورد';
+
+  const list = document.getElementById('list');
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">هنوز حسابی ثبت نشده<br>اولین حساب رو اضافه کن 👆</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <div class="item ${item.type} ${item.paid?'paid':''}">
+      <div class="item-head">
+        <div>
+          <div class="item-name">${item.name}</div>
+          <span class="item-type">${item.type==='talab'?'طلبکارم':'بدهکارم'}</span>
+        </div>
+        <div>
+          <div class="item-amount">${fmt(item.amount)}</div>
+          <div class="item-unit">ریال</div>
+        </div>
+      </div>
+      <div class="item-info">
+        ${item.date !== '—' ? `<div class="item-date">📅 ${item.date}</div>` : ''}
+        ${item.desc ? `<div class="item-desc">💬 ${item.desc}</div>` : ''}
+        ${item.paid ? '<span class="paid-tag">✓ تسویه شده</span>' : ''}
+      </div>
+      <div class="item-actions">
+        <button class="act-btn act-paid" onclick="togglePaid(${item.id})">${item.paid?'↩ برگشت':'✓ تسویه'}</button>
+        <button class="act-btn act-del" onclick="deleteItem(${item.id})">🗑 حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+render();
+</script>
+</body>
+</html>
